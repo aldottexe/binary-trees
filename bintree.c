@@ -20,19 +20,45 @@ int smartAddNode(node ** head_p, int val);
 
 int main()
 {
+    printf("////////////////////////////////////////////////////////////////////////////////\nprepare for a mess\n\n");
     node * head = NULL;
+    printf("adding 2\n");
     smartAddNode(&head, 2);
+    printTree(head, 0);
+    printf("adding 6\n");
     smartAddNode(&head, 6);
+    printTree(head, 0);
+    printf("adding 25\n");
     smartAddNode(&head, 25);
+    printTree(head, 0);
+    printf("adding 1\n");
     smartAddNode(&head, 1);
+    printTree(head, 0);
+    printf("adding 5\n");
     smartAddNode(&head, 5);
+    printTree(head, 0);
+    printf("adding 81\n");
     smartAddNode(&head, 81);
+    printTree(head, 0);
+    printf("adding 9\n");
     smartAddNode(&head, 9);
+    printTree(head, 0);
+    printf("adding 12\n");
     smartAddNode(&head, 12);
+    printTree(head, 0);
+    printf("adding 2\n");
     smartAddNode(&head, 2);
+    printTree(head, 0);
+    printf("adding 5\n");
     smartAddNode(&head, 5);
+    printTree(head, 0);
+    printf("adding 14\n");
     smartAddNode(&head, 14);
+    printTree(head, 0);
+    printf("adding 8\n");
     smartAddNode(&head, 8);
+    printTree(head, 0);
+    printf("adding 11\n");
     smartAddNode(&head, 11);
 
 
@@ -92,7 +118,7 @@ int smartAddNode(node ** head_p, int val)
     }
 
     //if reorganize is false end the function
-    if(!nodeAdded) return 0;
+    //if(!nodeAdded) return 0;
 
     //update the hight of property based on the heights of it's children
     int lh, rh = -1;
@@ -144,7 +170,7 @@ void printTree(node * head, int depth)
         printf("~\n");
         return;
     }
-    printf("----%i:%ih%i\n", head -> val, head -> count, head -> height);
+    printf("----%i:%ih%ibf%i\n", head -> val, head -> count, head -> height, head -> ballance_fac);
     
     printTree(head -> left, depth + 1);
     printTree(head -> right, depth + 1);
@@ -156,18 +182,31 @@ void printTree(node * head, int depth)
 
 node * rotateRight(node * old_head)
 {
+    printf("rotating right @%dh%d\n",old_head->val,old_head->height);
+
     node * new_head = old_head -> left;
     old_head -> left = new_head -> right;
     new_head -> right = old_head;
+
+    //no clue if this is right so heads up
+    old_head -> height -= 2;
+    old_head -> ballance_fac += 2;
+    new_head -> ballance_fac += 1;
 
     return new_head;
 }
 
 node * rotateLeft(node * old_head)
 {
+    printf("rotating left @%dh%d\n",old_head->val,old_head->height);
     node * new_head = old_head -> right;
     old_head -> right = new_head -> left;
     new_head -> left = old_head;
+
+    //no clue if this is right either
+    old_head -> height -= 2;
+    old_head -> ballance_fac -= 2;
+    new_head -> ballance_fac -= 1;
 
     return new_head;
 }

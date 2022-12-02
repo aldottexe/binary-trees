@@ -16,7 +16,7 @@ node * rotateLeft(node * old_head);
 node * rotateRight(node * old_head);
 void printTree(node * head, int depth);
 void addNode(node ** head_p, int val);
-void smartAddNode(node ** head_p, int val);
+int smartAddNode(node ** head_p, int val);
 
 int main()
 {
@@ -31,23 +31,12 @@ int main()
     smartAddNode(&head, 12);
     smartAddNode(&head, 2);
     smartAddNode(&head, 5);
+    smartAddNode(&head, 14);
+    smartAddNode(&head, 8);
+    smartAddNode(&head, 11);
 
 
     printTree(head, 0);
-
-    //head = rotateRight(head);
-    //printf("\nrotated right\n\n");     
-    //printTree(head, 0);
-
-
-    //head = rotateLeft(head);
-    //printf("\nrotated Left\n\n");     
-    //printTree(head, 0);
-
-    
-    //head = rotateLeft(head);
-    //printf("\nrotated Left\n\n");     
-    //printTree(head, 0);
 }
 
 void addNode(node ** head_p, int val)
@@ -73,7 +62,7 @@ void addNode(node ** head_p, int val)
         (*head_p) -> count += 1;
 }
 
-void smartAddNode(node ** head_p, int val)
+int smartAddNode(node ** head_p, int val)
 {
     node * head = *head_p;
     
@@ -86,21 +75,25 @@ void smartAddNode(node ** head_p, int val)
         head -> count = 1;
 
         *head_p = head;
-        return;
+        return 1; //returning a 1 will tell outer recursions to reorganize the tree
     }    
-    
+    int nodeAdded;
     //if the value is less, try again to the left
     if(head -> val < val)
-        smartAddNode(&(head -> left), val);
+        nodeAdded = smartAddNode(&(head -> left), val);
     //if value is more, try again to the right
     else if(head -> val > val)
-        smartAddNode(&(head -> right), val);
-    //if the value is found, increment count
+        nodeAdded = smartAddNode(&(head -> right), val);
+    //if the value is equal to this node's value, increment count
     else
     {
         head -> count += 1;
-        return;
+        return 0; //if no new node is added, no need to reorganize tree
     }
+
+    //if reorganize is false end the function
+    if(!nodeAdded) return 0;
+
     //update the hight of property based on the heights of it's children
     int lh, rh = -1;
     if (head -> left)  lh = head -> left -> height;
@@ -123,7 +116,7 @@ void smartAddNode(node ** head_p, int val)
         {
             //leftright
             head -> left = rotateLeft(head -> left);
-            rotateRight(head);
+            head = rotateRight(head);
         }
     
     else if(head -> ballance_fac ==2)
@@ -136,28 +129,29 @@ void smartAddNode(node ** head_p, int val)
             head -> right = rotateRight(head -> right);
             head = rotateLeft(head);
         }
-            
-
 
     *head_p = head;
-    return;
-
+    return 1;
 }
 
 void printTree(node * head, int depth)
 {
     for(int i = 0; i < depth; i++)
-        printf("| ");
+        printf("    |");
    
     if(!head)
     {
-        printf("<empty>\n");
+        printf("~\n");
         return;
     }
-    printf("%i: %i\n", head -> val, head -> count);
+    printf("----%i:%ih%i\n", head -> val, head -> count, head -> height);
     
     printTree(head -> left, depth + 1);
     printTree(head -> right, depth + 1);
+    
+    for(int i = 0; i < depth; i++)
+    printf("    |");
+    printf("\n");
 }
 
 node * rotateRight(node * old_head)
